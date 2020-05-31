@@ -7,7 +7,7 @@ from PIL import Image, ImageDraw, ImageFilter
 CIRCLE_SIZE = (130,133)
 CIRCLE_POSITION = (22, 20, 152, 143)
 
-def FRAME_IMAGE_FILE_NAME():
+def FRAME_IMAGE_FILE_PATH():
     return os.getcwd() + r'\TokenMaker\src\BaseImage.png'
 
 # ######################################################################
@@ -44,16 +44,19 @@ class ImageGenerater():
         return self
 
     def __exit__(self, ex_typr, wx_value, trace):
-        self.objMaskImage.close()
-        self.objFrameImage.close()
-        self.objMargin.close()
+        self.close_images
 
     def open_images(self):
-        self.objFrameImage = Image.open(FRAME_IMAGE_FILE_NAME())
+        self.objFrameImage = Image.open(FRAME_IMAGE_FILE_PATH())
         self.objMaskImage = self.make_mask()
         self.objMargin = Image.new('RGB', 
             self.objFrameImage.size,
             (0, 0, 0))
+
+    def close_images(self):
+        self.objMaskImage.close()
+        self.objFrameImage.close()
+        self.objMargin.close()
 
     def make_mask(self):
         result = Image.new("L", self.objFrameImage.size, 0)
