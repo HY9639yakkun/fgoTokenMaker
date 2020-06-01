@@ -1,14 +1,12 @@
 '''
 画像の取得
 '''
-import os
 from PIL import Image, ImageDraw, ImageFilter
+
+import FilePath
 
 CIRCLE_SIZE = (130,133)
 CIRCLE_POSITION = (22, 20, 152, 143)
-
-def FRAME_IMAGE_FILE_PATH():
-    return os.getcwd() + r'\TokenMaker\src\BaseImage.png'
 
 # ######################################################################
 def excute(filePath):
@@ -47,7 +45,7 @@ class ImageGenerater():
         self.close_images
 
     def open_images(self):
-        self.objFrameImage = Image.open(FRAME_IMAGE_FILE_PATH())
+        self.objFrameImage = Image.open(FilePath.get_frame())
         self.objMaskImage = self.make_mask()
         self.objMargin = Image.new('RGB', 
             self.objFrameImage.size,
@@ -125,7 +123,6 @@ class ImageGetter():
     def get_width(self):
         return self.objImage.width
 
-
 def make_square_size(width, height):
     one_side_of_a_square = min(height, width)
     one_side_of_a_square_devide = one_side_of_a_square/2
@@ -136,8 +133,6 @@ def make_square_size(width, height):
     return (left, upper, right, lower)
 
 # ######################################################################
-
-
 if __name__ == '__main__':
     print('PNGで動作確認 *****************************')
     im = excute(r'C:\makeTOOL\FGO\TEST.PNG')
