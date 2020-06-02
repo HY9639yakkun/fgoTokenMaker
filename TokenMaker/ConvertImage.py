@@ -3,6 +3,7 @@
 '''
 from PIL import Image, ImageDraw, ImageFilter
 
+import ChangeColor
 import FilePath
 
 CIRCLE_SIZE = (130,133)
@@ -14,9 +15,13 @@ def excute(filePath):
     with ImageGetter(filePath) as objImageGetter:
         objSquareImage = objImageGetter.get_square_image()
 
+    #色の変更
+    objChangeColor = ChangeColor.changeToGolden(objSquareImage)
+    image_change_color = objChangeColor.chage_color()
+
     # 取得した画像を縮小
     print('リサイズ...')
-    objResizeImage = objSquareImage.resize(CIRCLE_SIZE)
+    objResizeImage = image_change_color.resize(CIRCLE_SIZE)
     objResizeImage.show()
 
     with ImageGenerater(objResizeImage) as objImageGenerater:
@@ -37,6 +42,9 @@ class ImageGenerater():
         self.objFrameImage = None
         self.objMargin = None
 
+        #出力する画像のサイズ
+        self.image_size = (0,0)
+
     def __enter__(self):
         self.open_images()
         return self
@@ -46,9 +54,11 @@ class ImageGenerater():
 
     def open_images(self):
         self.objFrameImage = Image.open(FilePath.get_frame())
+        self.image_size = self.objFrameImage.size
+
         self.objMaskImage = self.make_mask()
         self.objMargin = Image.new('RGB', 
-            self.objFrameImage.size,
+            self.image_size,
             (0, 0, 0))
 
     def close_images(self):
@@ -57,7 +67,7 @@ class ImageGenerater():
         self.objMargin.close()
 
     def make_mask(self):
-        result = Image.new("L", self.objFrameImage.size, 0)
+        result = Image.new("L", self.image_size, 0)
         draw = ImageDraw.Draw(result)
         draw.ellipse(CIRCLE_POSITION, fill=255)
         return result
@@ -133,12 +143,15 @@ def make_square_size(width, height):
     return (left, upper, right, lower)
 
 # ######################################################################
-if __name__ == '__main__':
-    print('PNGで動作確認 *****************************')
-    im = excute(r'C:\makeTOOL\FGO\TEST.PNG')
+
+def test_run(file_path):
+    print('動作確認 *****************************')
+    im = excute(file_path)
     im.show()
 
-    print('JPGで動作確認 *****************************')
-    im = excute(r'C:\makeTOOL\FGO\TEST2.JPG')
-    im.show()
-    print(1)
+# ######################################################################
+if __name__ == '__main__':
+    test_run(r'C:\makeTOOL\FGO\test01.png')
+    test_run(r'C:\makeTOOL\FGO\test02.png')
+    test_run(r'C:\makeTOOL\FGO\test03.png')
+    test_run(r'C:\makeTOOL\FGO\test04.png')
